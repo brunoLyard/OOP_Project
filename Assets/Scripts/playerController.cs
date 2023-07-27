@@ -28,11 +28,12 @@ public class playerController : MonoBehaviour
     {
         if(Input.GetAxis("Vertical") != 0)
         {
-            Debug.Log("key down");
-            playerAnimator.SetTrigger("walk");
-        }
-        VerticalInput = Input.GetAxis("Vertical");
-        playerRb.AddForce(FocalPoint.transform.forward * VerticalInput * Time.deltaTime * speed, ForceMode.Impulse);
+            playerAnimator.SetBool("walk", true);
+            VerticalInput = Input.GetAxis("Vertical");
+            playerRb.AddForce(FocalPoint.transform.forward * VerticalInput * Time.deltaTime * speed, ForceMode.Impulse);
+        } 
+        else playerAnimator.SetBool("walk",false);
+
         HorizontalInput = Input.GetAxis("Horizontal");
         //playerRb.AddForce(Vector3.left  * HorizontalInput * Time.deltaTime, ForceMode.Impulse);
         transform.Rotate(new Vector3(0,HorizontalInput * Time.deltaTime * speed,0));
