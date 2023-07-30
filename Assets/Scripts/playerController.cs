@@ -10,9 +10,12 @@ public class playerController : MonoBehaviour
 
     private float VerticalInput;
     private float HorizontalInput;
+    private bool isGround = true;
+    private bool isItem = false;
     
+    // intégration solution direction pour déplacer le personnage
     [SerializeField]
-    private float speed = 10;
+    private float speed = 4f;
 
     // Start is called before the first frame update
     void Start()
@@ -26,17 +29,59 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetAxis("Vertical") != 0)
+        HorizontalInput = Input.GetAxis("Horizontal");
+        VerticalInput = Input.GetAxis("Vertical");
+
+        Vector3 direction = new Vector3(HorizontalInput,0,VerticalInput);
+        if (direction.magnitude>1f) direction.Normalize();
+
+        transform.position += direction * speed * Time.deltaTime;
+
+        if(direction.magnitude>0.03f)
         {
             playerAnimator.SetBool("walk", true);
-            VerticalInput = Input.GetAxis("Vertical");
-            playerRb.AddForce(FocalPoint.transform.forward * VerticalInput * Time.deltaTime * speed, ForceMode.Impulse);
-        } 
+            Quaternion rotationGoal = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Lerp(transform.rotation, rotationGoal, Time.deltaTime * 4f);
+        }
         else playerAnimator.SetBool("walk",false);
 
-        HorizontalInput = Input.GetAxis("Horizontal");
-        //playerRb.AddForce(Vector3.left  * HorizontalInput * Time.deltaTime, ForceMode.Impulse);
-        transform.Rotate(new Vector3(0,HorizontalInput * Time.deltaTime * speed,0));
-        
+            if ( Input.GetKeyDown(KeyCode.Space) && isGround)
+        {
+            isJump();
+        }
+
+        if ( GameManager.Instance.isItem) ItemActive();
+    }
+
+    void OnCollisionEnter(Collision other)
+    {
+        if ( other.gameObject.CompareTag("Ground"))
+        {
+            playerAnimator.SetBool("jump", false);
+            isGround = true;
+        }
+        if ( other.gameObject.CompareTag("wall"))
+        {
+            Debug.Log("collision wall");
+            playerRb.AddForce(Vector3.back * 20 , ForceMode.Impulse);
+        }
+    }
+
+    private void isWalk()
+    {
+        playerAnimator.SetBool("walk", true);
+        VerticalInput = Input.GetAxis("Vertical");
+        transform.Translate(Vector3.forward * Time.deltaTime * VerticalInput * 3);
+    }
+    private void isJump()
+    {
+        isGround = false;      
+        playerRb.AddForce(Vector3.up * 5  , ForceMode.Impulse);
+        playerAnimator.SetBool("jump", true);
+    }
+
+    public void ItemActive()
+    {
+        transform.Find("Item").gameObject.SetActive(true);
     }
 }
