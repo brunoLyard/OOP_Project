@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
    public static GameManager Instance => instance;
 
    public bool isItem = false;// { get ; private set;}
+   public bool IsGameOver = false;
     
     void Awake()
     {

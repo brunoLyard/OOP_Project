@@ -8,6 +8,8 @@ public class playerController : MonoBehaviour
     private GameObject FocalPoint;
     private Animator playerAnimator;
 
+    public GameObject Projectile;
+
     private float VerticalInput;
     private float HorizontalInput;
     private bool isGround = true;
@@ -47,7 +49,8 @@ public class playerController : MonoBehaviour
 
             if ( Input.GetKeyDown(KeyCode.Space) && isGround)
         {
-            isJump();
+            //isJump();
+            shootProjectile();
         }
 
         if ( GameManager.Instance.isItem) ItemActive();
@@ -73,6 +76,16 @@ public class playerController : MonoBehaviour
         VerticalInput = Input.GetAxis("Vertical");
         transform.Translate(Vector3.forward * Time.deltaTime * VerticalInput * 3);
     }
+
+    private void shootProjectile()
+    {  
+  /*               Instantiate(Projectile,
+                     transform.position + Projectile.transform.position, 
+                    Quaternion.identity); */
+                    Instantiate(Projectile, transform);
+        
+    }
+
     private void isJump()
     {
         isGround = false;      
