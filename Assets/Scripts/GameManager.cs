@@ -7,8 +7,13 @@ public class GameManager : MonoBehaviour
    private static GameManager instance = null;
    public static GameManager Instance => instance;
 
-   public bool isItem = false;// { get ; private set;}
+
+
+   
    public bool IsGameOver = false;
+   public bool isItem;
+  
+   public string PlayerName;
     
     void Awake()
     {
@@ -24,9 +29,14 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
     }
 
-    public void ItemTouch()
+    public void PauseGame()
     {
-        isItem = true;
+        Time.timeScale = 0;
+    }
+   
+    public void ResumeGame()
+    {
+        Time.timeScale = 1;
     }
 
 }

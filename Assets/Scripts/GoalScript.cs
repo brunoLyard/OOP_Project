@@ -11,10 +11,12 @@ public class GoalScript : MonoBehaviour
     }
     void OnCollisionEnter(Collision other)
     {
-        if ( other.gameObject.CompareTag("Player"))
+        if ( other.gameObject.CompareTag("Player") && GameManager.Instance.isItem)
         {
             win.Play();
+            //GameManager.Instance.PauseGame();
         }
     }
 
+    
 }

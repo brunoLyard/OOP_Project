@@ -12,12 +12,14 @@ public class playerController : MonoBehaviour
 
     private float VerticalInput;
     private float HorizontalInput;
-    private bool isGround = true;
+    
     private bool isItem = false;
     
     // intégration solution direction pour déplacer le personnage
     [SerializeField]
-    private float speed = 4f;
+    private float speed = 5f;
+    private float boostSpeed = 2;
+    private bool isBoost = false;
 
     // Start is called before the first frame update
     void Start()
@@ -31,13 +33,25 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if ( Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            isBoost = true;
+        } 
+        else if ( Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            isBoost = false;
+        }
+
         HorizontalInput = Input.GetAxis("Horizontal");
         VerticalInput = Input.GetAxis("Vertical");
 
         Vector3 direction = new Vector3(HorizontalInput,0,VerticalInput);
         if (direction.magnitude>1f) direction.Normalize();
 
+        if ( !isBoost )
         transform.position += direction * speed * Time.deltaTime;
+        else
+        transform.position += direction * speed * boostSpeed * Time.deltaTime;
 
         if(direction.magnitude>0.03f)
         {
@@ -47,54 +61,28 @@ public class playerController : MonoBehaviour
         }
         else playerAnimator.SetBool("walk",false);
 
-            if ( Input.GetKeyDown(KeyCode.Space) && isGround)
+        if ( Input.GetKeyDown(KeyCode.Space))
         {
-            //isJump();
             shootProjectile();
         }
+
 
         if ( GameManager.Instance.isItem) ItemActive();
     }
 
     void OnCollisionEnter(Collision other)
     {
-        if ( other.gameObject.CompareTag("Ground"))
-        {
-            playerAnimator.SetBool("jump", false);
-            isGround = true;
-        }
-        if ( other.gameObject.CompareTag("wall"))
-        {
-            Debug.Log("collision wall");
-            playerRb.AddForce(Vector3.back * 20 , ForceMode.Impulse);
-        }
     }
 
-    private void isWalk()
-    {
-        playerAnimator.SetBool("walk", true);
-        VerticalInput = Input.GetAxis("Vertical");
-        transform.Translate(Vector3.forward * Time.deltaTime * VerticalInput * 3);
-    }
 
     private void shootProjectile()
     {  
-  /*               Instantiate(Projectile,
-                     transform.position + Projectile.transform.position, 
-                    Quaternion.identity); */
-                    Instantiate(Projectile, transform);
-        
-    }
-
-    private void isJump()
-    {
-        isGround = false;      
-        playerRb.AddForce(Vector3.up * 5  , ForceMode.Impulse);
-        playerAnimator.SetBool("jump", true);
+        Instantiate(Projectile, transform);      
     }
 
     public void ItemActive()
     {
         transform.Find("Item").gameObject.SetActive(true);
+        GameManager.Instance.isItem = true;
     }
 }

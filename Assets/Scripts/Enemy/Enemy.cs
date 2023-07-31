@@ -25,6 +25,7 @@ public abstract class Enemy : MonoBehaviour
         SetSpeed();     
         player = GameObject.Find("Player");  
         
+        
     }
     void Update()
     {

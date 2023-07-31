@@ -20,8 +20,9 @@ public class ItemScript : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        //player.transform.Find("Item").gameObject.SetActive(true);
-        GameManager.Instance.ItemTouch();
+        player.transform.Find("Item").gameObject.SetActive(true);
+        GameManager.Instance.isItem = true;
+
 
         Destroy(gameObject);
         
